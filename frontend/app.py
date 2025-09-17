@@ -1,8 +1,8 @@
+from PIL import Image
 import streamlit as st
-import requests
-import json
+from io import BytesIO
+import requests, json, os
 from typing import Any, List, Dict
-import os
 # ----------------------
 # Page / Theme Setup
 # ----------------------
@@ -16,7 +16,7 @@ body, .stApp {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 .stApp {
-  background: linear-gradient(180deg, rgba(10,10,10,0.6), rgba(30,30,30,0.6)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1400&q=60');
+  background: linear-gradient(180deg, rgba(10,10,10,0.6), rgba(30,30,30,0.6)), url('https://raw.githubusercontent.com/Kratugautam99/FoodieBotAgent-Project/refs/heads/main/Images/background/bg.jpg');
   background-size: cover;
   background-attachment: fixed;
   color: #fff;
@@ -45,7 +45,7 @@ body, .stApp {
   margin-left: auto;
 }
 .assistant-bubble {
-  background-image: url('https://images.unsplash.com/photo-1551782450-a2132b4ba21d?auto=format&fit=crop&w=1000&q=60');
+  background-image: url('https://raw.githubusercontent.com/Kratugautam99/FoodieBotAgent-Project/refs/heads/main/Images/background/bot.gif');
   background-size: cover;
   background-position: center;
   color: #fff;
@@ -166,9 +166,8 @@ def normalize_product(product: Dict[str, Any]) -> Dict[str, Any]:
     return p
 
 def generate_image_from_prompt(product: dict) -> str:
-    id = product.get("product_id")
-    id = int(id[2:])
-    url = f"https://raw.githubusercontent.com/Kratugautam99/FoodieBotAgent-Project/refs/heads/main/Images/DatabaseImages/{id}.jpg"
+    id = int(product.get("product_id")[2:])
+    url = f"https://raw.githubusercontent.com/Kratugautam99/FoodieBotAgent-Project/main/Images/database_images/{id}.jpg"
     return url
 
 # ----------------------
@@ -212,11 +211,13 @@ for message in st.session_state.messages:
                         image_url = generate_image_from_prompt(product) 
                         if image_url:
                             try:
+                                response = requests.get(image_url)
+                                img = Image.open(BytesIO(response.content))
+                                img = img.resize((500, 300))
                                 # Streamlit will accept both remote URLs and local file paths
-                                st.image(image_url, use_container_width=True, caption=f"Image: {product.get('image_prompt')}")
-                            except Exception:
-                                # fallback: small placeholder area
-                                st.write("(Image cannot be loaded)")
+                                st.image(img, caption=f"Image: {product.get('image_prompt')}")
+                            except Exception as e:
+                                st.text(f"Error: {e}")
 
                         st.write(f"**Description:** {product.get('description')}")
                         st.write(f"**Category:** {product.get('category')}")
@@ -306,13 +307,16 @@ if prompt := st.chat_input("What are you craving today?"):
                             with st.expander(f"🍔 {product.get('name')} - ${product.get('price')}", expanded=True):
                                 st.markdown(f"<div class='product-card'>", unsafe_allow_html=True)
 
-                                # show image if present
                                 image_url = generate_image_from_prompt(product) 
                                 if image_url:
                                     try:
-                                        st.image(image_url, use_container_width=True, caption=f"Image: {product.get('image_prompt')}")
-                                    except Exception:
-                                        st.write("(Image cannot be loaded)")
+                                        response = requests.get(image_url)
+                                        img = Image.open(BytesIO(response.content))
+                                        img = img.resize((500, 300))
+                                        # Streamlit will accept both remote URLs and local file paths
+                                        st.image(img, caption=f"Image: {product.get('image_prompt')}")
+                                    except Exception as e:
+                                        st.text(f"Error: {e}")
 
                                 st.write(f"**Description:** {product.get('description')}")
                                 st.write(f"**Category:** {product.get('category')}")
