@@ -2,18 +2,11 @@ import streamlit as st
 import requests
 import json
 from typing import Any, List, Dict
-import os, sys
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-BACKEND_DIR = os.path.join(BASE_DIR, "../backend")
-sys.path.append(BACKEND_DIR)
-from filter_functions import get_unique_values
+import os
 # ----------------------
 # Page / Theme Setup
 # ----------------------
-st.set_page_config(page_title="Foodie-Guru", page_icon="C:/Users/user/Downloads/FastFoodBotAgent-Project/Images/icon/icon.png", layout="wide")
-results = get_unique_values()
-if results not in st.session_state:
-    st.session_state.results = results
+st.set_page_config(page_title="Foodie-Guru", page_icon="https://raw.githubusercontent.com/Kratugautam99/FoodieBotAgent-Project/refs/heads/main/Images/Icon/icon.png", layout="wide")
 
 # Custom CSS for a nicer look and message backgrounds
 PAGE_CSS = """
@@ -87,9 +80,9 @@ col1, col2 = st.columns([1, 4])
 with col1:
     # Use emoji if local image not available
     try:
-        st.image("C:/Users/user/Downloads/FastFoodBotAgent-Project/Images/icon/icon.png", width=180)
+        st.image("https://raw.githubusercontent.com/Kratugautam99/FoodieBotAgent-Project/refs/heads/main/Images/Icon/icon.png", width=180)
     except Exception:
-        st.markdown("<div style='font-size:48px'>C:/Users/user/Downloads/FastFoodBotAgent-Project/Images/icon.png</div>", unsafe_allow_html=True)
+        st.markdown("<div style='font-size:48px'>https://raw.githubusercontent.com/Kratugautam99/FoodieBotAgent-Project/refs/heads/main/Images/Icon/icon.png</div>", unsafe_allow_html=True)
 with col2:
     st.markdown('''<div class="header-card">
 <h1 style="color: #5eead4; margin:0">Foodie-Guru</h1>
@@ -175,8 +168,8 @@ def normalize_product(product: Dict[str, Any]) -> Dict[str, Any]:
 def generate_image_from_prompt(product: dict) -> str:
     id = product.get("product_id")
     id = int(id[2:])
-    
-
+    url = f"https://raw.githubusercontent.com/Kratugautam99/FoodieBotAgent-Project/refs/heads/main/Images/DatabaseImages/{id}.jpg"
+    return url
 
 # ----------------------
 # Sidebar controls
