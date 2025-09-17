@@ -1,6 +1,6 @@
 from PIL import Image
-import streamlit as st
 from io import BytesIO
+import streamlit as st
 import requests, json, os
 from typing import Any, List, Dict
 # ----------------------
