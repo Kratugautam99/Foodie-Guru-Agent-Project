@@ -176,6 +176,10 @@ http://13.51.79.106:8000/docs
 
 ---
 
+## 📄 License
+
+This project is released under the MIT License. See [LICENSE](LICENSE) for details.
+
 ---
 
 <div align="center">
@@ -184,8 +188,3 @@ http://13.51.79.106:8000/docs
   <a href="https://kratugautam-foodieguruagent-project.streamlit.app">Streamlit Frontend</a> | 
   <a href="http://13.51.79.106:8000">FastAPI Backend</a>
 </div>
-
-
-## 📄 License
-
-This project is released under the MIT License. See [LICENSE](LICENSE) for details.
