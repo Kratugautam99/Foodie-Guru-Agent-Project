@@ -133,14 +133,14 @@ From mood detection to interest scoring, from database queries to live dashboard
 ### 1. Start the FastAPI Backend
 ```bash
 cd backend
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 Swagger UI will be available at `http://<EC2_PUBLIC_IP>:8000/docs`.
 
 ### 2. Launch the Streamlit Frontend
 ```bash
 cd ../frontend
-streamlit run app.py
+streamlit run frontend/app.py
 ```
 Open the Streamlit app in your browser at `http://localhost:8501` (or use the live demo link above).
 
@@ -151,7 +151,7 @@ Open the Streamlit app in your browser at `http://localhost:8501` (or use the li
 | Method | Endpoint           | Description                          |
 |--------|--------------------|--------------------------------------|
 | POST   | `/chat`            | Send user message, receive recommendations and updated interest score. |
-| GET    | `/analytics`       | Retrieve conversation analytics data. |
+| GET    | `/`       | {"message":"FoodieBot API is running!"} |
 
 Full documentation is available via Swagger UI:  
 http://13.51.79.106:8000/docs
@@ -172,7 +172,7 @@ http://13.51.79.106:8000/docs
 2. Create a feature branch (`git checkout -b feature/YourFeature`)  
 3. Commit your changes (`git commit -m "Add YourFeature"`)  
 4. Push to your fork (`git push origin feature/YourFeature`)  
-5. Open a Pull Request — we’ll review and merge!
+5. Open a Pull Request — i’ll review and merge!
 
 ---
 
@@ -185,6 +185,6 @@ This project is released under the MIT License. See [LICENSE](LICENSE) for detai
 <div align="center">
   Developed with 🧠 by <b>Kratu Gautam</b> | AIML Engineer<br>
   <a href="https://github.com/Kratugautam99">GitHub</a> | 
-  <a href="https://kratugautam-foodieguruagent-project.streamlit.app">Streamlit Frontend</a> | 
-  <a href="http://13.51.79.106:8000">FastAPI Backend</a>
+  <a href="https://kratugautam-foodieguruagent-project.streamlit.app">Streamlit[Frontend]</a> | 
+  <a href="http://13.51.79.106:8000">FastAPI[Backend]</a>
 </div>
