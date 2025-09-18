@@ -1,8 +1,9 @@
 import sqlite3, os
-
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 db_path = os.path.join(BASE_DIR, "../data/FoodData.db")
+db_path = os.path.abspath(db_path)
 
+# Query fastfood with flexible filters
 def get_fastfood_by_filters(
     category=None,
     max_price=None,
@@ -16,7 +17,7 @@ def get_fastfood_by_filters(
     limited_time=None,
     min_spice=None,
     max_spice=None,
-    limit=5,
+    limit=None,
     debug=None
 ):
     """
@@ -86,15 +87,17 @@ def get_fastfood_by_filters(
         query += " AND calories <= ?"
         params.append(calories)
 
-    # Order by popularity
-    if popularity:
+    # Popularity
+    if popularity is not None:
+        query += " AND popularity_score >= ?"
+        params.append(popularity)
         query += " ORDER BY popularity_score DESC LIMIT ?"
         params.append(limit)
     else:
         query += " LIMIT ?"
         params.append(limit)
     
-    
+    # Debugging
     if debug:
         print("DEBUG SQL:", query)
         print("DEBUG PARAMS:", params)
@@ -104,7 +107,7 @@ def get_fastfood_by_filters(
     conn.close()
     return fastfood
 
-
+# Returns unique values for categorical fields
 def get_unique_values():
     """
     Extract unique values from categorical columns.
@@ -114,11 +117,7 @@ def get_unique_values():
     conn.row_factory = lambda cursor, row: row[0]  # return single column
     
     results = {}
-
-    # Category (simple)
     results["categories"] = list(set(conn.execute("SELECT category FROM fastfood").fetchall()))
-
-    # Mood tags
     mood_rows = conn.execute("SELECT mood_tags FROM fastfood").fetchall()
     mood_tags = set()
     for row in mood_rows:
@@ -127,7 +126,6 @@ def get_unique_values():
                 mood_tags.add(tag.strip())
     results["mood_tags"] = sorted(mood_tags)
 
-    # Dietary tags
     diet_rows = conn.execute("SELECT dietary_tags FROM fastfood").fetchall()
     dietary_tags = set()
     for row in diet_rows:
@@ -136,7 +134,6 @@ def get_unique_values():
                 dietary_tags.add(tag.strip())
     results["dietary_tags"] = sorted(dietary_tags)
 
-    # Allergens
     allergen_rows = conn.execute("SELECT allergens FROM fastfood").fetchall()
     allergens = set()
     for row in allergen_rows:
@@ -145,7 +142,6 @@ def get_unique_values():
                 allergens.add(tag.strip())
     results["allergens"] = sorted(allergens)
 
-    # Ingredients
     ingredient_rows = conn.execute("SELECT ingredients FROM fastfood").fetchall()
     ingredients = set()
     for row in ingredient_rows:

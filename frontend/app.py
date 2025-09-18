@@ -1,8 +1,13 @@
+# Primary Frontend Streamlit App for Foodie-Guru
 from PIL import Image
 from io import BytesIO
 import streamlit as st
-import requests, json, os
+import requests, json, os, sys
 from typing import Any, List, Dict
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+from backend import analytics
 # ----------------------
 # Page / Theme Setup
 # ----------------------
@@ -62,23 +67,62 @@ body, .stApp {
   border: 1px solid rgba(255,255,255,0.03);
 }
 
-/* Sidebar tweaks */
-.stSidebar { background: rgba(0,0,0,0.5); }
+/* ---------------- Sidebar Beautification ---------------- */
+section[data-testid="stSidebar"] {
+  background: rgba(0,0,0,0.65) !important;
+  backdrop-filter: blur(8px);
+  padding: 20px 15px;
+  border-right: 2px solid rgba(255,255,255,0.08);
+}
 
-/* Make metrics stand out */
-.metric-value { color: #fff !important; }
+section[data-testid="stSidebar"] h1, 
+section[data-testid="stSidebar"] h2, 
+section[data-testid="stSidebar"] h3 {
+  color: #5eead4 !important;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
 
-@media (max-width: 640px) {
-  .user-bubble, .assistant-bubble { max-width: 94%; }
+section[data-testid="stSidebar"] .stButton>button {
+  background: linear-gradient(90deg, #5eead4, #14b8a6);
+  color: black;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 6px 12px;
+  transition: transform 0.2s ease;
+}
+section[data-testid="stSidebar"] .stButton>button:hover {
+  transform: scale(1.05);
+  background: linear-gradient(90deg, #34d399, #10b981);
+}
+
+section[data-testid="stSidebar"] input {
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.1);
+  color: #fff !important;
+}
+
+section[data-testid="stSidebar"] .stMarkdown p {
+  font-size: 14px;
+  color: #e2e8f0;
+}
+
+/* Divider effect for sections */
+.sidebar-section {
+  margin: 15px 0;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed rgba(255,255,255,0.15);
 }
 </style>
 """
+
 st.markdown(PAGE_CSS, unsafe_allow_html=True)
 
 # Top layout with logo + title
 col1, col2 = st.columns([1, 4])
 with col1:
-    # Use emoji if local image not available
     try:
         st.image("https://raw.githubusercontent.com/Kratugautam99/FoodieBotAgent-Project/refs/heads/main/Images/Icon/icon.png", width=180)
     except Exception:
@@ -143,25 +187,21 @@ def display_tags(tags: Any, tag_type: str = "default") -> str:
         }
         emoji = tag_colors.get(tag_type, "🏷️")
         return f"{emoji} " + " • ".join(str(x) for x in parsed)
-    # fallback
     return str(parsed)
 
 
 def normalize_product(product: Dict[str, Any]) -> Dict[str, Any]:
     """Ensure product dict fields are in expected python types for display."""
-    p = dict(product)  # shallow copy
-    # Parse fields that might be stored as JSON strings
+    p = dict(product)  
     for key in ["mood_tags", "dietary_tags", "allergens", "ingredients"]:
         if key in p:
             p[key] = safe_json_loads(p[key])
-    # Numeric fallbacks
     p["price"] = p.get("price") or 0.0
     p["calories"] = p.get("calories") or "N/A"
     p["spice_level"] = p.get("spice_level") or "N/A"
     p["popularity_score"] = p.get("popularity_score") or "N/A"
     p["chef_special"] = bool(p.get("chef_special"))
     p["limited_time"] = bool(p.get("limited_time"))
-    # Preserve image_prompt field
     p["image_prompt"] = p.get("image_prompt")
     return p
 
@@ -184,8 +224,30 @@ with st.sidebar:
     if st.button("Clear Conversation"):
         st.session_state.messages = []
         st.session_state.session_id = f"session_{hash(str(st.session_state))}"
-        st.experimental_rerun()
+    st.markdown("---")
+    st.title("📊 Conversation Analytics Dashboard")
+    # Buttons for different analytics
+    if st.button("🥇 Most Recommended Products"):
+        counts = analytics.get_most_recommended_products()
+        st.bar_chart(counts)
 
+    if st.button("📈 Show Interest Progression"):
+        if st.session_state.session_id:
+            df = analytics.get_interest_progression(st.session_state.session_id)
+            st.line_chart(df.set_index("timestamp")["interest_score"])
+
+    if st.button("❌ Show Drop-off Points"):
+        df = analytics.get_drop_off_points()
+        st.dataframe(df)
+
+    if st.button("⏳ Show Average Session Duration"):
+        avg = analytics.get_average_duration()
+        st.write(f"Average session duration: **{avg}**")
+
+    if st.button("💰 Highest Converting Products"):
+        counts = analytics.get_highest_converting_products()
+        st.bar_chart(counts)
+    st.markdown("---")
 
 # ----------------------
 # Render chat history
@@ -194,20 +256,16 @@ for message in st.session_state.messages:
     role = message.get("role", "assistant")
     content = message.get("content", "")
     with st.chat_message(role):
-        # Allow HTML so our bubbles render with background images / gradients
         st.markdown(content, unsafe_allow_html=True)
 
         fastfoods = message.get("fastfoods") or message.get("products") or []
         if fastfoods:
-            # Show product cards in a responsive two-column grid
             cols = st.columns(2)
             for idx, raw_product in enumerate(fastfoods):
                 product = normalize_product(raw_product)
                 with cols[idx % 2]:
                     with st.expander(f"🍔 {product.get('name')} - ${product.get('price')}", expanded=True):
                         st.markdown(f"<div class='product-card'>", unsafe_allow_html=True)
-
-                        # Render image if image_prompt exists (supports URL, local file, or prompt -> Unsplash)
                         image_url = generate_image_from_prompt(product) 
                         if image_url:
                             try:
@@ -260,7 +318,6 @@ for message in st.session_state.messages:
 # Chat input and send
 # ----------------------
 if prompt := st.chat_input("What are you craving today?"):
-    # Wrap user message in styled bubble and append to history
     user_html = f"<div class='user-bubble'>{prompt}</div>"
     st.session_state.messages.append({"role": "user", "content": user_html})
     with st.chat_message("user"):
@@ -277,27 +334,20 @@ if prompt := st.chat_input("What are you craving today?"):
         with st.spinner("FoodieBot is thinking..."):
             try:
                 response = requests.post(st.session_state.api_url, json=payload, timeout=12)
-                # Raise for non-2xx
                 response.raise_for_status()
                 response_data = response.json()
 
                 bot_reply = response_data.get("reply", "")
                 interest_score = response_data.get("interest_score", 0)
                 suggested_fastfoods = response_data.get("suggested_fastfoods") or []
-
-                # Wrap assistant reply in a beautiful background bubble
+                session_id = response_data.get("session_id") 
                 assistant_html = f"""<div class='assistant-bubble'>
                                     <h3>Foodie-Guru</h3>
                                     <p>{bot_reply}</p>
                                     </div>"""
 
-                # Display wrapped reply
                 st.markdown(assistant_html, unsafe_allow_html=True)
-
-                # Show interest score as a metric (0-100)
                 st.metric(label="Interest Score", value=f"{interest_score}%", delta_color="off")
-
-                # Display suggested fastfoods
                 if suggested_fastfoods:
                     st.subheader("🍽️ Suggestions for you:")
                     cols = st.columns(2)
@@ -313,7 +363,6 @@ if prompt := st.chat_input("What are you craving today?"):
                                         response = requests.get(image_url)
                                         img = Image.open(BytesIO(response.content))
                                         img = img.resize((500, 300))
-                                        # Streamlit will accept both remote URLs and local file paths
                                         st.image(img, caption=f"Image: {product.get('image_prompt')}")
                                     except Exception as e:
                                         st.text(f"Error: {e}")
@@ -373,5 +422,3 @@ with st.sidebar:
     st.write("• Dietary preferences 🥗 🌱 🌶️")
     st.write("• Budget 💰")
     st.write("• Allergies and restrictions ⚠️")
-    st.write("")
-    st.write("Backend API: ", st.session_state.api_url)

@@ -3,23 +3,28 @@ import json
 from dotenv import load_dotenv
 from groq import Groq
 from .filter_functions import get_fastfood_by_filters, get_unique_values
+from .analytics import log_conversation, get_last_interest_score
 
-# Load environment variables from .env file
-load_dotenv()
 
 # Initialize the Groq client using the API key from .env
+load_dotenv()
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+conversation_memory = {}
 
+# Main function to analyze user message and generate response
 def analyze_message(user_message: str, session_id: str):
+    interest_score = get_last_interest_score(session_id)
     """
-    1. Analyzes the user's message using Groq.
-    2. Extracts filters for database query.
-    3. Calculates interest score.
-    4. Fetches fastfoods from DB.
-    5. Generates a friendly response.
+    Analyze user's message, maintain memory of last 3 messages,
+    extract filters, calculate interest score, fetch fastfoods, 
+    and generate a friendly response.
     """
     
     results = get_unique_values()
+    if session_id not in conversation_memory:
+        conversation_memory[session_id] = []
+    conversation_memory[session_id].append({"role": "user", "content": user_message})
+    conversation_memory[session_id] = conversation_memory[session_id][-3:]
 
     system_prompt = f"""
     You are FoodieBot, an enthusiastic and helpful AI assistant for a fast food restaurant.
@@ -27,39 +32,42 @@ def analyze_message(user_message: str, session_id: str):
     Always be polite, engaging, and excited about the food. boolean values should be True/False.
     
     ENGAGEMENT_FACTORS = [
-        'specific_preferences': +15,    # e.g., I love spicy Korean food
-        'dietary_restrictions': +10,    # e.g., I am vegetarian
-        'budget_mention': +5,           # e.g., Under $15
-        'mood_indication': +20,         # e.g., I am feeling adventurous
-        'question_asking': +10,         # e.g., What is the spice level?
-        'enthusiasm_words': +8,         # e.g., amazing, perfect, love
-        'price_inquiry': +25,           # e.g., How much is that?
-        'order_intent': +30             # e.g., I will take it, Add to cart
+        'specific_preferences': +15,
+        'dietary_restrictions': +10,
+        'budget_mention': +5,
+        'mood_indication': +20,
+        'question_asking': +10,
+        'enthusiasm_words': +8,
+        'price_inquiry': +25,
+        'order_intent': +30
     ]
 
     NEGATIVE_FACTORS = [
-        'hesitation': -10,              # e.g., maybe, not sure
-        'budget_concern': -15,          # e.g., too expensive
-        'dietary_conflict': -20,        # e.g., Product doesn't match restrictions
-        'rejection': -25,               # e.g., I don't like that
-        'delay_response': -5            # e.g., Long response time
+        'hesitation': -10,
+        'budget_concern': -15,
+        'dietary_conflict': -20,
+        'rejection': -25,
+        'delay_response': -5
     ]
-    calculate an interest score based on these factors to gauge how interested the user is in ordering use above format.
+    calculate an interest score based on these factors to gauge how interested the user is in ordering.
 
     **CRITICAL INSTRUCTIONS:**
     - Analyze the user's input and extract the following parameters for a database query:
-    * category (e.g., {', '.join(results['categories'])}) this category should have 1st alphabet capitalized unlike other categorical categories.
+    * category (e.g., {', '.join(results['categories'])}), cant be None but can be "Any"
     * max_price (numeric value if user mentions budget)
     * mood_tags (e.g., {', '.join(results['mood_tags'])})
     * dietary_tags (e.g., {', '.join(results['dietary_tags'])})
     * allergens_exclude (e.g., {', '.join(results['allergens'])})
     * chef_special (boolean if user wants special items)
-    * popularity (boolean if user mentions popular or best-selling items)
+    * popularity (numeric value if user mentions popular or best-selling items)
     * ingredients_include (e.g., {', '.join(results['ingredients'])})
     * calories (numeric value if user mentions calorie limit → interpret as max calories)
     * limited_time (boolean if user wants limited-time offers)
     * min_spice (numeric if user requests spiciness, e.g. 5+)
     * max_spice (numeric if user requests mildness, e.g. up to 3)
+    * interest_score (calculated based on engagement and negative factors)
+    * limit (number of items to return, default to 3 if not specified)
+    * debug (boolean, set to True if user wants to see SQL query)
 
     - Your response must be a JSON object with this exact structure:
     {{
@@ -71,27 +79,27 @@ def analyze_message(user_message: str, session_id: str):
         "dietary_tags": ["spicy"],
         "allergens_exclude": ["soy"],
         "chef_special": False,
-        "popularity": False,
+        "popularity": 45,
         "ingredients_include": ["beef patty"],
         "calories": 700,
         "limited_time": True,
         "min_spice": 3,
-        "max_spice": 8
+        "max_spice": 8,
         "interest_score": 45
+        "limit" : 3
+        "debug" : False
     }}
     }}
-    - Calculate the interest_score based on the ENGAGEMENT_FACTORS and NEGATIVE_FACTORS above and include it in the filters. Note interest_score cant be negative or None, and Default value should be 0.
+    - Calculate the interest_score and include it. Default 0 if not found, Max is 100 and Min is -100.
     - If a parameter is not mentioned by the user, set its value to None.
-    - Only suggest menu items that exist in the database. Do not make up menu items.
+    - Only suggest menu items that exist in the database.
     """
 
+    messages = [{"role": "system", "content": system_prompt}] + conversation_memory[session_id]
 
     chat_completion = client.chat.completions.create(
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_message}
-        ],
-        model="deepseek-r1-distill-llama-70b",
+        messages=messages,
+        model="meta-llama/llama-4-maverick-17b-128e-instruct",
         temperature=0.7,
         response_format={"type": "json_object"}
     )
@@ -100,22 +108,35 @@ def analyze_message(user_message: str, session_id: str):
     extracted_filters = llm_response.get("filters", {})
 
     suggested_fastfoods = get_fastfood_by_filters(
-    category=extracted_filters.get("category"),
-    max_price=extracted_filters.get("max_price"),
-    mood_tags=extracted_filters.get("mood_tags"),
-    dietary_tags=extracted_filters.get("dietary_tags"),
-    allergens_exclude=extracted_filters.get("allergens_exclude"),
-    chef_special=extracted_filters.get("chef_special"),
-    limited_time=extracted_filters.get("limited_time"),
-    min_spice=extracted_filters.get("min_spice"),
-    max_spice=extracted_filters.get("max_spice"),
-    limit=3,
-)   
-    suggested_fastfoods = [dict(item) for item in suggested_fastfoods]  # Convert sqlite3.Row to dict
+        category=extracted_filters.get("category"),
+        max_price=extracted_filters.get("max_price"),
+        mood_tags=extracted_filters.get("mood_tags"),
+        dietary_tags=extracted_filters.get("dietary_tags"),
+        allergens_exclude=extracted_filters.get("allergens_exclude"),
+        chef_special=extracted_filters.get("chef_special"),
+        limited_time=extracted_filters.get("limited_time"),
+        min_spice=extracted_filters.get("min_spice"),
+        max_spice=extracted_filters.get("max_spice"),
+        ingredients_include=extracted_filters.get("ingredients_include"),
+        calories=extracted_filters.get("calories"),
+        popularity=extracted_filters.get("popularity"),
+        limit=extracted_filters.get("limit", 3),
+        debug=extracted_filters.get("debug", False)
+    )   
 
-    interest_score = extracted_filters.get("interest_score")
+    suggested_fastfoods = [dict(item) for item in suggested_fastfoods]
 
+    interest_score = extracted_filters.get("interest_score", 30)
     bot_reply = llm_response["reply"]
+
+    log_conversation(
+        session_id=session_id,
+        user_message=user_message,
+        bot_reply=bot_reply,
+        interest_score=interest_score,
+        filters=extracted_filters,
+        products=[dict(item) for item in suggested_fastfoods]
+    )
 
     if suggested_fastfoods:
         top_product = suggested_fastfoods[0]
@@ -127,4 +148,3 @@ def analyze_message(user_message: str, session_id: str):
         "interest_score": interest_score,
         "session_id": session_id
     }
-

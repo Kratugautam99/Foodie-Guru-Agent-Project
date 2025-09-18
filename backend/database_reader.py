@@ -1,6 +1,8 @@
+# Database Reader from SQLite
 import sqlite3,os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 db_path = os.path.join(BASE_DIR, "../data/FoodData.db")
+db_path = os.path.abspath(db_path)
 """This script connects to the SQLite database and retrieves all records from the 'fastfood' table."""
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()

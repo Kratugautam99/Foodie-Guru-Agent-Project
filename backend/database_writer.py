@@ -1,7 +1,10 @@
+# Database Writer through SQLite
 import sqlite3, json, os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 db_path = os.path.join(BASE_DIR, "../data/FoodData.db")
+db_path = os.path.abspath(db_path)
 json_path = os.path.join(BASE_DIR, "../data/FoodData.json")
+json_path = os.path.abspath(json_path)
 """Initializes the database and creates the fastfood table if it doesn't exist."""
 data = json.load(open(json_path))
 conn = sqlite3.connect(db_path)
