@@ -134,7 +134,7 @@ with col2:
 </div>''', unsafe_allow_html=True)
 
 # Default backend URL (matches backend main.py)
-DEFAULT_API_URL = os.environ.get("FOODIEBOT_API_URL", "http://localhost:8000/chat")
+DEFAULT_API_URL = os.environ.get("FOODIEBOT_API_URL", "http://13.51.79.106:8000//chat")
 
 # Initialize session state
 if "messages" not in st.session_state:
