@@ -6,6 +6,8 @@
   </p>
 </p>
 
+---
+
 **FoodieGuruAgent** isn’t just another chatbot — it’s a full‑stack, agent‑driven food discovery experience.  
 It listens like a friend, thinks like a data scientist, and recommends like a seasoned foodie.  
 Powered by a **FastAPI** backend and a sleek **Streamlit** frontend, it taps into a curated **SQLite** database of 100+ AI‑generated menu items to serve you the perfect bite, every time.
