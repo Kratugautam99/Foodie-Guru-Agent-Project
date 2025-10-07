@@ -2,12 +2,18 @@
 from PIL import Image
 from io import BytesIO
 import streamlit as st
+import threading, uvicorn
 import requests, json, os, sys
 from typing import Any, List, Dict
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 from backend import analytics
+from backend.main import app
+from backend.filter_functions import get_unique_values
+def run_api():
+    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
+threading.Thread(target=run_api, daemon=True).start()
 # ----------------------
 # Page / Theme Setup
 # ----------------------
@@ -134,7 +140,7 @@ with col2:
 </div>''', unsafe_allow_html=True)
 
 # Default backend URL (matches backend main.py)
-DEFAULT_API_URL = os.environ.get("FOODIEBOT_API_URL", "http://13.51.79.106:8000//chat")
+DEFAULT_API_URL = os.environ.get("FOODIEBOT_API_URL", "http://localhost:8000//chat")
 
 # Initialize session state
 if "messages" not in st.session_state:
@@ -248,6 +254,7 @@ with st.sidebar:
         counts = analytics.get_highest_converting_products()
         st.bar_chart(counts)
     st.markdown("---")
+
 
 # ----------------------
 # Render chat history
@@ -414,11 +421,34 @@ if prompt := st.chat_input("What are you craving today?"):
                 st.error(f"Error parsing response from server: {e}")
 
 
-# Footer / about
+# Footer / About Section
 with st.sidebar:
-    st.header("ℹ️ About FoodieBot")
-    st.write("I'm your AI food assistant! I can help you find the perfect meal based on:")
-    st.write("• Your mood 😊 🎉 😋")
-    st.write("• Dietary preferences 🥗 🌱 🌶️")
-    st.write("• Budget 💰")
-    st.write("• Allergies and restrictions ⚠️")
+    st.markdown("## ℹ️ About **FoodieBot**")
+    st.markdown(
+        """
+        Your friendly AI food concierge 🤖🍔  
+        Helping you discover the perfect meal based on:
+        """
+    )
+    results = get_unique_values()
+    st.markdown("### 🍽️ Available Food Categories")
+    categories = results.get("categories", [])
+    if categories:
+        st.markdown(
+            "\n".join(
+                [f"{i+1}. **{cat}**" for i, cat in enumerate(categories[:10])]
+            )
+        )
+    else:
+        st.info("No categories available.")
+    st.markdown("### 🎯 Personalization Factors")
+    st.markdown(
+        """
+        - Your **mood** 😊 🎉 😋  
+        - **Dietary preferences** 🥗 🌱 🌶️  
+        - **Budget** 💰  
+        - **Allergies & restrictions** ⚠️  
+        """
+    )
+    st.markdown("---")
+    st.caption("🍕 FoodieBot — making cravings smarter, one bite at a time.")

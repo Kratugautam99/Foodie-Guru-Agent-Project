@@ -33,13 +33,10 @@ def analyze_message(user_message: str, session_id: str):
     
     ENGAGEMENT_FACTORS = [
         'specific_preferences': +15,
-        'dietary_restrictions': +10,
-        'budget_mention': +5,
         'mood_indication': +20,
         'question_asking': +10,
-        'enthusiasm_words': +8,
+        'enthusiasm_words': +25,
         'price_inquiry': +25,
-        'order_intent': +30
     ]
 
     NEGATIVE_FACTORS = [
@@ -49,11 +46,12 @@ def analyze_message(user_message: str, session_id: str):
         'rejection': -25,
         'delay_response': -5
     ]
-    calculate an interest score based on these factors to gauge how interested the user is in ordering.
+    calculate an interest score based on these factors and this is last interest score = {interest_score}.
+    for 'order_intent' change it to 95.
 
     **CRITICAL INSTRUCTIONS:**
     - Analyze the user's input and extract the following parameters for a database query:
-    * category (e.g., {', '.join(results['categories'])}), cant be None but can be "Any"
+    * category (e.g., {', '.join(results['categories'])}) -> cant be None 
     * max_price (numeric value if user mentions budget)
     * mood_tags (e.g., {', '.join(results['mood_tags'])})
     * dietary_tags (e.g., {', '.join(results['dietary_tags'])})
@@ -90,8 +88,8 @@ def analyze_message(user_message: str, session_id: str):
         "debug" : False
     }}
     }}
-    - Calculate the interest_score and include it. Default 0 if not found, Max is 100 and Min is -100.
-    - If a parameter is not mentioned by the user, set its value to None.
+    - Calculate the interest_score and include it. Default 0 if not found, Max is 100 and Min is -100. 
+    - If a parameter is not mentioned by the user, set its value to None but "category" cant be None.
     - Only suggest menu items that exist in the database.
     """
 
