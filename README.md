@@ -10,7 +10,7 @@
 
 **Foodie-Guru-Agent** isn’t just another chatbot — it’s a full‑stack, agent‑driven food discovery experience.  
 It listens like a friend, thinks like a data scientist, and recommends like a seasoned foodie.  
-Powered by a **FastAPI** backend and a sleek **Streamlit** frontend, it taps into a curated **SQLite** database of 100+ AI‑generated menu items to serve you the perfect bite, every time.
+Powered by a **FastAPI** backend and a sleek **Streamlit** frontend, it taps into a curated **SQLite** database of 100 AI‑generated menu items to serve you the perfect bite, every time.
 
 Whether you’re craving a midnight burger, looking for vegan pizza, or just curious about what fits your budget and mood, FoodieGuruAgent blends **natural conversation**, **real‑time analytics**, and **smart filtering** to make every recommendation feel tailor‑made.  
 From mood detection to interest scoring, from database queries to live dashboards — it’s your personal food concierge, available 24/7.
@@ -23,8 +23,27 @@ From mood detection to interest scoring, from database queries to live dashboard
 - Frontend Chat Interface (Streamlit):  
   https://kratugautam-foodieguruagent-project.streamlit.app
 
-- Backend API (FastAPI):  
-  http://13.51.79.106:8000
+- Backend API (FastAPI) [Not-Deployed-Standalonely]:  
+  http://localhost:8000
+
+---
+---
+
+## 🖼️ Demo Screenshots
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Kratugautam99/Foodie-Guru-Agent-Project/refs/heads/main/Images/demo/1.png" alt="FoodieBot Demo 1" width="45%" />
+  <img src="https://raw.githubusercontent.com/Kratugautam99/Foodie-Guru-Agent-Project/refs/heads/main/Images/demo/2.png" alt="FoodieBot Demo 2" width="45%" />
+</p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Kratugautam99/Foodie-Guru-Agent-Project/refs/heads/main/Images/demo/3.png" alt="FoodieBot Demo 3" width="45%" />
+  <img src="https://raw.githubusercontent.com/Kratugautam99/Foodie-Guru-Agent-Project/refs/heads/main/Images/demo/4.png" alt="FoodieBot Demo 4" width="45%" />
+</p>
+
+<p align="center">
+  <em>Interactive chat, personalized recommendations, and real-time analytics — all in action!</em>
+</p>
 
 ---
 
@@ -40,7 +59,7 @@ From mood detection to interest scoring, from database queries to live dashboard
   Filters and ranks items by mood tags, dietary tags, price range, popularity score, and real-time availability.
 
 - **Database-Driven Responses**  
-  Queries a SQLite database of 100+ AI-generated fast-food products across 10 categories (Burgers, Pizza, Tacos, Desserts, and more).
+  Queries a SQLite database of 100 AI-generated fast-food products across 10 categories (Burgers, Pizza, Tacos, Desserts, and more).
 
 - **Analytics Dashboard**  
   Tracks conversation metrics (interest score progression, drop-off points) and product performance (conversion rates, category analysis).
@@ -70,6 +89,7 @@ From mood detection to interest scoring, from database queries to live dashboard
 ├── images
 │   ├── Icon
 │   ├── background
+│   ├── demo
 │   └── database_images
 ├── backend
 │   ├── __init__.py
@@ -103,14 +123,14 @@ From mood detection to interest scoring, from database queries to live dashboard
 
 1. **Clone the repository**  
    ```bash
-   git clone https://github.com/Kratugautam99/FoodieGuruAgent-Project.git
-   cd FoodieGuruAgent-Project
+   git clone https://github.com/Kratugautam99/Foodie-Guru-Agent-Project.git
+   cd Foodie-Guru-Agent-Project
    ```
 
 2. **Create a virtual environment**  
    ```bash
-   python3 -m venv env
-   source env/bin/activate
+   python3 -m venv foodenv
+   source foodenv/bin/activate
    ```
 
 3. **Install dependencies**  
@@ -118,7 +138,8 @@ From mood detection to interest scoring, from database queries to live dashboard
    pip install -r requirements.txt
    ```
 
-4. **Set environment variables** (optional)  
+4. **Set environment variables** (optional)
+   for e.g. :-
    ```bash
    export API_URL="http://13.51.79.106:8000"
    ```
@@ -134,14 +155,12 @@ From mood detection to interest scoring, from database queries to live dashboard
 
 ### 1. Start the FastAPI Backend
 ```bash
-cd backend
 uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
 ```
-Swagger UI will be available at `http://<EC2_PUBLIC_IP>:8000/docs`.
+Swagger UI will be available at `http://localhost:8000/docs`.
 
-### 2. Launch the Streamlit Frontend
+### 2. Directly Launch the Streamlit Frontend
 ```bash
-cd ../frontend
 streamlit run frontend/app.py
 ```
 Open the Streamlit app in your browser at `http://localhost:8501` (or use the live demo link above).
@@ -156,7 +175,7 @@ Open the Streamlit app in your browser at `http://localhost:8501` (or use the li
 | GET    | `/`       | {"message":"FoodieBot API is running!"} |
 
 Full documentation is available via Swagger UI:  
-http://13.51.79.106:8000/docs
+http://localhost:8000/docs
 
 ---
 
@@ -188,5 +207,5 @@ This project is released under the MIT License. See [LICENSE](LICENSE) for detai
   Developed with 🧠 by <b>Kratu Gautam</b> | AIML Engineer<br>
   <a href="https://github.com/Kratugautam99">GitHub</a> | 
   <a href="https://kratugautam-foodieguruagent-project.streamlit.app">Streamlit[Frontend]</a> | 
-  <a href="http://13.51.79.106:8000">FastAPI[Backend]</a>
+  <a href="http://localhost:8000">FastAPI[Backend]</a>
 </div>
