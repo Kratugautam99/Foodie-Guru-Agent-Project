@@ -423,11 +423,12 @@ if prompt := st.chat_input("What are you craving today?"):
 
 # Footer / About Section
 with st.sidebar:
-    st.markdown("## ℹ️ About **FoodieBot**")
+    st.markdown("## ℹ️ About **Foodie-Guru**")
+    st.markdown("-- **Made by Kratu Gautam**")
     st.markdown(
         """
-        Your friendly AI food concierge 🤖🍔  
-        Helping you discover the perfect meal based on:
+        **Your friendly AI food concierge 🤖🍔  
+        Helping you discover the perfect meal**
         """
     )
     results = get_unique_values()
@@ -450,5 +451,3 @@ with st.sidebar:
         - **Allergies & restrictions** ⚠️  
         """
     )
-    st.markdown("---")
-    st.caption("🍕 FoodieBot — making cravings smarter, one bite at a time.")
