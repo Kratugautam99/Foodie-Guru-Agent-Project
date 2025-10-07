@@ -1,6 +1,6 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Kratugautam99/FoodieGuruAgent-Project/refs/heads/main/Images/Icon/icon.png" alt="FoodieGuruAgent Logo" width="400" />
-  <h1 align="center">FoodieGuruAgent</h1>
+  <img src="https://raw.githubusercontent.com/Kratugautam99/Foodie-Guru-Agent-Project/refs/heads/main/Images/Icon/icon.png" alt="FoodieGuruAgent Logo" width="400" />
+  <h1 align="center">Foodie-Guru-Agent</h1>
   <p align="center">
     🍔 Your AI-powered culinary companion — delivering smart, mood‑aware, and personalized fast‑food recommendations in real time 🚀
   </p>
@@ -8,7 +8,7 @@
 
 ---
 
-**FoodieGuruAgent** isn’t just another chatbot — it’s a full‑stack, agent‑driven food discovery experience.  
+**Foodie-Guru-Agent** isn’t just another chatbot — it’s a full‑stack, agent‑driven food discovery experience.  
 It listens like a friend, thinks like a data scientist, and recommends like a seasoned foodie.  
 Powered by a **FastAPI** backend and a sleek **Streamlit** frontend, it taps into a curated **SQLite** database of 100+ AI‑generated menu items to serve you the perfect bite, every time.
 
