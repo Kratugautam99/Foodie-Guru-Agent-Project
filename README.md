@@ -27,7 +27,6 @@ From mood detection to interest scoring, from database queries to live dashboard
   http://localhost:8000
 
 ---
----
 
 ## 🖼️ Demo Screenshots
 
