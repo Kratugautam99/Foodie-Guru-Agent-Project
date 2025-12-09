@@ -137,17 +137,10 @@ From mood detection to interest scoring, from database queries to live dashboard
    pip install -r requirements.txt
    ```
 
-4. **Set environment variables** (optional)
-   for e.g. :-
+4. **Set environment variable (Important)**
    ```bash
-   export API_URL="http://13.51.79.106:8000"
+   export GROQ_API_KEY = "your_api_key_here"
    ```
-   Or add to `~/.bash_profile` for persistence:
-   ```bash
-   echo 'export API_URL="http://13.51.79.106:8000"' >> ~/.bash_profile
-   source ~/.bash_profile
-   ```
-
 ---
 
 ## ▶️ Running the Project
