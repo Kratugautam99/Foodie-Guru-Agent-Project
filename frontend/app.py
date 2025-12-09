@@ -1,10 +1,8 @@
 # Primary Frontend Streamlit App for Foodie-Guru
 from PIL import Image
 from io import BytesIO
-import streamlit as st
-import threading, uvicorn
-import requests, json, os, sys
 from typing import Any, List, Dict
+import threading, uvicorn, requests, json, os, sys, pandas as pd, streamlit as st
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
@@ -243,16 +241,20 @@ with st.sidebar:
             st.line_chart(df.set_index("timestamp")["interest_score"])
 
     if st.button("❌ Show Drop-off Points"):
-        df = analytics.get_drop_off_points()
+        drop_offs = analytics.get_drop_off_points()
+        df = pd.DataFrame(drop_offs, columns=["Product ID", "Product Name"])
         st.dataframe(df)
 
     if st.button("⏳ Show Average Session Duration"):
         avg = analytics.get_average_duration()
-        st.write(f"Average session duration: **{avg}**")
+        st.write(f"Average session duration: ")
+        for day, duration in avg.items():
+            st.write(f"- {day}: {duration}")
 
     if st.button("💰 Highest Converting Products"):
-        counts = analytics.get_highest_converting_products()
-        st.bar_chart(counts)
+        products = analytics.get_highest_converting_products()
+        df = pd.DataFrame(products, columns=["Product ID", "Product Name","Total Interest Score"])
+        st.dataframe(df)
     st.markdown("---")
 
 
