@@ -85,35 +85,34 @@ From mood detection to interest scoring, from database queries to live dashboard
 
 ```bash
 .
-├── images
+├── images                   # Icons, backgrounds, demo assets, database visuals
 │   ├── Icon
 │   ├── background
 │   ├── demo
 │   └── database_images
-├── backend
-│   ├── __init__.py
-│   ├── analytics.py
-│   ├── chat_engine.py
-│   ├── database_reader.py
-│   ├── database_writer.py
-│   ├── filter_functions.py
-│   ├── main.py
-│   └── models.py
-├── data
+├── backend                  # Core backend logic and APIs
+│   ├── analytics.py         # Food data analytics functions
+│   ├── chat_engine.py       # Conversational AI engine
+│   ├── database_reader.py   # Read operations for SQLite/JSON data
+│   ├── database_writer.py   # Write/update operations for databases
+│   ├── filter_functions.py  # Filtering and recommendation logic
+│   ├── main.py              # Entry point for backend server
+│   └── models.py            # Data models and schemas
+├── data                     # Databases and JSON datasets
 │   ├── Analytics.db
 │   ├── FoodData.db
 │   ├── FoodData.json
 │   └── __init__.py
-├── frontend
+├── frontend                 # Frontend app interface
 │   └── app.py
-├── sqlite
+├── sqlite                   # SQLite utilities and executables
 │   ├── sqldiff.exe
 │   ├── sqlite3.exe
 │   ├── sqlite3_analyzer.exe
 │   └── sqlite_rsync.exe
-├── task
+├── task                     # Documentation and project notes
 │   └── AI Food Agent.pdf
-└── requirements.txt
+└── requirements.txt         # Python dependencies
 ```
 
 ---
@@ -137,17 +136,10 @@ From mood detection to interest scoring, from database queries to live dashboard
    pip install -r requirements.txt
    ```
 
-4. **Set environment variables** (optional)
-   for e.g. :-
+4. **Set environment variable (Important)**
    ```bash
-   export API_URL="http://13.51.79.106:8000"
+   export GROQ_API_KEY = "your_api_key_here"
    ```
-   Or add to `~/.bash_profile` for persistence:
-   ```bash
-   echo 'export API_URL="http://13.51.79.106:8000"' >> ~/.bash_profile
-   source ~/.bash_profile
-   ```
-
 ---
 
 ## ▶️ Running the Project
