@@ -76,8 +76,8 @@ From mood detection to interest scoring, from database queries to live dashboard
 | Frontend Framework      | Streamlit                 |
 | Database                | SQLite (FoodData.db, Analytics.db) |
 | Language                | Python 3.11                |
-| Key Libraries           | uvicorn, pydantic, pandas, requests |
-| AI & Data Generation    | Groq API (product gen), LLM API (chat) |
+| Key Libraries           | Uvicorn, Pydantic, Pandas, Requests |
+| AI & Data Generation    | Groq API (currently qwen3-32b) |
 
 ---
 
@@ -106,12 +106,12 @@ From mood detection to interest scoring, from database queries to live dashboard
 │   └── __init__.py
 ├── frontend                 # Frontend app interface
 │   └── app.py
-├── sqlite                   # SQLite utilities and executables
+├── sqlite3 executables      # SQLite utilities and executables
 │   ├── sqldiff.exe
 │   ├── sqlite3.exe
 │   ├── sqlite3_analyzer.exe
 │   └── sqlite_rsync.exe
-├── task                     # Documentation and project notes
+├── problem statement        # Problem Statement tackled by the project
 │   └── AI Food Agent.pdf
 └── requirements.txt         # Python dependencies
 ```
