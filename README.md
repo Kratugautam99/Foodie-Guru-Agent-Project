@@ -85,20 +85,21 @@ From mood detection to interest scoring, from database queries to live dashboard
 
 ```bash
 .
-├── images                   # Icons, backgrounds, demo assets, database visuals
+├── images                   # Icons, Background, Demonstration Images, Database Visuals
 │   ├── Icon
 │   ├── background
 │   ├── demo
 │   └── database_images
 ├── backend                  # Core backend logic and APIs
-│   ├── analytics.py         # Food data analytics functions
-│   ├── chat_engine.py       # Conversational AI engine
-│   ├── database_reader.py   # Read operations for SQLite/JSON data
-│   ├── database_writer.py   # Write/update operations for databases
-│   ├── filter_functions.py  # Filtering and recommendation logic
-│   ├── main.py              # Entry point for backend server
-│   └── models.py            # Data models and schemas
-├── data                     # Databases and JSON datasets
+│   ├── analytics.py             # Food data analytics functions
+│   ├── chat_engine.py           # Conversational AI engine
+│   ├── database_reader.py       # Read operations for SQLite/JSON data
+│   ├── database_writer.py       # Write/update operations for databases
+│   ├── filter_functions.py      # Filtering and recommendation logic
+│   ├── main.py                  # Entry point for backend server
+│   ├── session_id_generator.py  # Session ID Generator
+│   └── models.py                # Data models and schemas
+├── data                         # Databases and JSON datasets
 │   ├── Analytics.db
 │   ├── FoodData.db
 │   ├── FoodData.json
@@ -125,18 +126,23 @@ From mood detection to interest scoring, from database queries to live dashboard
    cd Foodie-Guru-Agent-Project
    ```
 
-2. **Create a virtual environment**  
+2. **Create a virtual environment (by Conda) Recommended**
+  ```bash
+  conda env create -f environment.yml
+  ```
+
+3. **Create a virtual environment (by Venv) for Python Version = 3.10.18**  
    ```bash
    python3 -m venv foodenv
    source foodenv/bin/activate
    ```
 
-3. **Install dependencies**  
+4. **Install dependencies (If created by Venv)**  
    ```bash
    pip install -r requirements.txt
    ```
 
-4. **Set environment variable (Important)**
+5. **Set environment variable (Important)**
    ```bash
    export GROQ_API_KEY = "your_api_key_here"
    ```
@@ -155,6 +161,44 @@ Swagger UI will be available at `http://localhost:8000/docs`.
 streamlit run frontend/app.py
 ```
 Open the Streamlit app in your browser at `http://localhost:8501` (or use the live demo link above).
+
+----
+
+## ✒️ Prompts Engineering Aid with Examples
+
+### **1. General Inquiries**  
+- "Tell me about pizza options."  
+- "Tell me 10 options of pizzas."  
+- "List the beverages."  
+- "Tell me about beverages."  
+
+
+### **2. Filter-Based Search**  
+- "Show me pizzas with max spice level 5."  
+- "Show me pizzas under $12."  
+- "Show me vegetarian pizzas."  
+- "Show me items with ingredients: mushrooms, olives."  
+
+
+### **3. Ordering & Confirmation**  
+- "Pack the buffalo ranch chicken pizza."  
+- "Add the Classic Margherita Pizza to my order."  
+- "Confirm my order."  
+- "Pack the Truffle Mushroom Gourmet Pizza."  
+
+
+### **4. Personalization & Preferences**  
+- "Show me items for mood: happy."  
+- "Show me items with dietary preference: low-carb."  
+- "Show me items with allergens: peanuts."  
+- "Show me items with ingredients: basil, tomatoes."  
+
+
+### **5. Combined Filters**  
+- "Show me pizzas with max spice 5, min price $10, popularity > 85."  
+- "Show me beverages with max price $5, calories < 200, vegan."  
+- "Show me items with ingredients: cheese, tomato, basil, and no nuts."  
+- "Show me items with ingredients: cheese, tomato, basil, and no dairy."  
 
 ---
 

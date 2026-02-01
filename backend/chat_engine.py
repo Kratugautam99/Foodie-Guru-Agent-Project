@@ -10,7 +10,6 @@ from .analytics import log_conversation, get_last_interest_score
 load_dotenv()
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 conversation_memory = {}
-
 # Main function to analyze user message and generate response
 def analyze_message(user_message: str, session_id: str):
     interest_score = get_last_interest_score(session_id)
@@ -30,10 +29,12 @@ def analyze_message(user_message: str, session_id: str):
     Your Name is FoodieGuru, an enthusiastic and helpful AI assistant for a fast food restaurant and suggest people dishes according to their cravings
     After user says that he/she wants to order you should reply with order will arrive in 30 mins.
     Your goal is to understand the customer's cravings, dietary needs, budget, and mood to recommend the perfect meal from the menu.
-    Always be polite, engaging, and excited about the food. boolean values should be True/False.
+    Always be polite, engaging, and excited about the food. boolean values should be True/False. 
     
-    Last interest_score = {interest_score}.
+
+    Last interest score = {interest_score}.
     Rules:
+    - if Last interest score is already 100, then set to 0.
     - Add +15 if user expresses specific preference (e.g. craving, delighted, favorite).
     - Add +20 if user shows mood/emotion (happy, sad, hungry, excited).
     - Add +10 if user asks a question.
@@ -44,25 +45,25 @@ def analyze_message(user_message: str, session_id: str):
     - Subtract -20 for dietary conflict (allergic).
     - Subtract -25 for rejection (no).
     - Subtract -5 for delay (later).
-    - If user says "pack up" or "i will order" → set score to 95.
+    - If user says "pack up" or "i will order" → set score to 100.
     - Max score is 100, Min is -100
 
     **CRITICAL INSTRUCTIONS:**
     - Analyze the user's input and extract the following parameters for a database query:
-    * category (e.g., {', '.join(results['categories'])}) -> cant be None but Foodie-Guru can choose among these mentioned categories only to suggest.
+    * category (options=>, {', '.join(results['categories'])}) -> cant be empty, use only options
     * max_price (numeric value if user mentions budget)
     * mood_tags (e.g., {', '.join(results['mood_tags'])})
     * dietary_tags (e.g., {', '.join(results['dietary_tags'])})
     * allergens_exclude (e.g., {', '.join(results['allergens'])})
     * chef_special (boolean if user wants special items)
-    * popularity (numeric value if user mentions popular or best-selling items)
+    * min_popularity (minimum numeric value threshold if user mentions popular or best-selling items)
     * ingredients_include (e.g., {', '.join(results['ingredients'])})
-    * calories (numeric value if user mentions calorie limit → interpret as max calories)
+    * max_calories (numeric value if user mentions calorie limit → interpret as max calories)
     * limited_time (boolean if user wants limited-time offers)
     * min_spice (numeric if user requests spiciness, e.g. 5+)
     * max_spice (numeric if user requests mildness, e.g. up to 3)
     * interest_score (calculated according to the rules above)
-    * limit (number of items to return, default to 3 if not specified)
+    * count (number of items to return, default to 3 if not specified)
     * debug (boolean, set to True if user wants to see SQL query)
 
     - Your response must be a JSON object with this exact structure from below example:
@@ -71,18 +72,18 @@ def analyze_message(user_message: str, session_id: str):
     "filters": {{
         "category": "Burgers",
         "max_price": 10.0,
-        "mood_tags": ["adventurous"],
+        "mood_tags": ["adventurous", "comfort"],
         "dietary_tags": ["spicy"],
         "allergens_exclude": ["soy"],
         "chef_special": False,
-        "popularity": 45,
+        "min_popularity": 45,
         "ingredients_include": ["beef patty"],
-        "calories": 700,
+        "max_calories": 700,
         "limited_time": True,
         "min_spice": 3,
         "max_spice": 8,
         "interest_score": 45
-        "limit" : 3
+        "count" : 3
         "debug" : False
     }}
     }}
@@ -92,7 +93,7 @@ def analyze_message(user_message: str, session_id: str):
 
     chat_completion = client.chat.completions.create(
         messages=messages,
-        model="meta-llama/llama-4-maverick-17b-128e-instruct",
+        model="qwen/qwen3-32b",
         temperature=0.7,
         response_format={"type": "json_object"}
     )
@@ -111,9 +112,9 @@ def analyze_message(user_message: str, session_id: str):
         min_spice=extracted_filters.get("min_spice"),
         max_spice=extracted_filters.get("max_spice"),
         ingredients_include=extracted_filters.get("ingredients_include"),
-        calories=extracted_filters.get("calories"),
-        popularity=extracted_filters.get("popularity"),
-        limit=extracted_filters.get("limit", 3),
+        calories=extracted_filters.get("max_calories"),
+        popularity=extracted_filters.get("min_popularity"),
+        count=extracted_filters.get("count", 3),
         debug=extracted_filters.get("debug", False)
     )   
 

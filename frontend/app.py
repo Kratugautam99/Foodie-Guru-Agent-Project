@@ -7,7 +7,7 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 from backend import analytics
-from backend.main import app
+from backend.main import app, session_id
 from backend.filter_functions import get_unique_values
 def run_api():
     uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
@@ -16,7 +16,6 @@ threading.Thread(target=run_api, daemon=True).start()
 # Page / Theme Setup
 # ----------------------
 st.set_page_config(page_title="Foodie-Guru", page_icon="https://raw.githubusercontent.com/Kratugautam99/FoodieBotAgent-Project/refs/heads/main/Images/Icon/icon.png", layout="wide")
-
 # Custom CSS for a nicer look and message backgrounds
 PAGE_CSS = """
 <style>
@@ -24,6 +23,7 @@ PAGE_CSS = """
 body, .stApp {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+
 .stApp {
   background: linear-gradient(180deg, rgba(10,10,10,0.6), rgba(30,30,30,0.6)), url('https://raw.githubusercontent.com/Kratugautam99/FoodieBotAgent-Project/refs/heads/main/Images/background/bg.jpg');
   background-size: cover;
@@ -121,7 +121,6 @@ section[data-testid="stSidebar"] .stMarkdown p {
 }
 </style>
 """
-
 st.markdown(PAGE_CSS, unsafe_allow_html=True)
 
 # Top layout with logo + title
@@ -145,7 +144,7 @@ if "messages" not in st.session_state:
     messages: List[Dict[str, Any]] = []
     st.session_state.messages = messages
 if "session_id" not in st.session_state:
-    st.session_state.session_id = "default_session"
+    st.session_state.session_id = session_id
 if "api_url" not in st.session_state:
     st.session_state.api_url = DEFAULT_API_URL
 
@@ -227,7 +226,6 @@ with st.sidebar:
     st.write("")
     if st.button("Clear Conversation"):
         st.session_state.messages = []
-        st.session_state.session_id = f"session_{hash(str(st.session_state))}"
     st.markdown("---")
     st.title("📊 Conversation Analytics Dashboard")
     # Buttons for different analytics
@@ -236,9 +234,14 @@ with st.sidebar:
         st.bar_chart(counts)
 
     if st.button("📈 Show Interest Progression"):
-        if st.session_state.session_id:
-            df = analytics.get_interest_progression(st.session_state.session_id)
-            st.line_chart(df.set_index("timestamp")["interest_score"])
+        sid = ''
+        if st.session_state.session_id and st.session_state.messages:
+            sid = st.session_state.session_id
+        else:
+            sid = 'default_session'
+        df = analytics.get_interest_progression(sid)
+        st.line_chart(df.set_index("timestamp")["interest_score"])
+        st.write(f"For Current Session ID => {sid}")
 
     if st.button("❌ Show Drop-off Points"):
         drop_offs = analytics.get_drop_off_points()
@@ -264,62 +267,61 @@ with st.sidebar:
 for message in st.session_state.messages:
     role = message.get("role", "assistant")
     content = message.get("content", "")
-    with st.chat_message(role):
-        st.markdown(content, unsafe_allow_html=True)
+    st.markdown(content, unsafe_allow_html=True)
 
-        fastfoods = message.get("fastfoods") or message.get("products") or []
-        if fastfoods:
-            cols = st.columns(2)
-            for idx, raw_product in enumerate(fastfoods):
-                product = normalize_product(raw_product)
-                with cols[idx % 2]:
-                    with st.expander(f"🍔 {product.get('name')} - ${product.get('price')}", expanded=True):
-                        st.markdown(f"<div class='product-card'>", unsafe_allow_html=True)
-                        image_url = generate_image_from_prompt(product) 
-                        if image_url:
-                            try:
-                                response = requests.get(image_url)
-                                img = Image.open(BytesIO(response.content))
-                                img = img.resize((500, 300))
-                                # Streamlit will accept both remote URLs and local file paths
-                                st.image(img, caption=f"Image: {product.get('image_prompt')}")
-                            except Exception as e:
-                                st.text(f"Error: {e}")
+    fastfoods = message.get("fastfoods") or message.get("products") or []
+    if fastfoods:
+        cols = st.columns(2)
+        for idx, raw_product in enumerate(fastfoods):
+            product = normalize_product(raw_product)
+            with cols[idx % 2]:
+                with st.expander(f"🍔 {product.get('name')} - ${product.get('price')}", expanded=True):
+                    st.markdown(f"<div class='product-card'>", unsafe_allow_html=True)
+                    image_url = generate_image_from_prompt(product) 
+                    if image_url:
+                        try:
+                            response = requests.get(image_url)
+                            img = Image.open(BytesIO(response.content))
+                            img = img.resize((500, 300))
+                            # Streamlit will accept both remote URLs and local file paths
+                            st.image(img, caption=f"Image: {product.get('image_prompt')}")
+                        except Exception as e:
+                            st.text(f"Error: {e}")
 
-                        st.write(f"**Description:** {product.get('description')}")
-                        st.write(f"**Category:** {product.get('category')}")
+                    st.write(f"**Description:** {product.get('description')}")
+                    st.write(f"**Category:** {product.get('category')}")
 
-                        # Nutritional info
-                        col1, col2, col3 = st.columns(3)
-                        with col1:
-                            st.metric("Calories", product.get('calories'))
-                        with col2:
-                            st.metric("Spice Level", f"{product.get('spice_level')}/10" if isinstance(product.get('spice_level'), int) else product.get('spice_level'))
-                        with col3:
-                            st.metric("Popularity", f"{product.get('popularity_score')}%" if isinstance(product.get('popularity_score'), int) else product.get('popularity_score'))
+                    # Nutritional info
+                    col1, col2, col3 = st.columns(3)
+                    with col1:
+                        st.metric("Calories", product.get('calories'))
+                    with col2:
+                        st.metric("Spice Level", f"{product.get('spice_level')}/10" if isinstance(product.get('spice_level'), int) else product.get('spice_level'))
+                    with col3:
+                        st.metric("Popularity", f"{product.get('popularity_score')}%" if isinstance(product.get('popularity_score'), int) else product.get('popularity_score'))
 
-                        st.write(f"**Prep Time:** {product.get('prep_time')}")
+                    st.write(f"**Prep Time:** {product.get('prep_time')}")
 
-                        if product.get('mood_tags'):
-                            st.write(display_tags(product.get('mood_tags'), "mood"))
-                        if product.get('dietary_tags'):
-                            st.write(display_tags(product.get('dietary_tags'), "dietary"))
+                    if product.get('mood_tags'):
+                        st.write(display_tags(product.get('mood_tags'), "mood"))
+                    if product.get('dietary_tags'):
+                        st.write(display_tags(product.get('dietary_tags'), "dietary"))
 
-                        if product.get('allergens'):
-                            allergens = product.get('allergens')
-                            if isinstance(allergens, list):
-                                st.warning(f"**Contains:** {', '.join(allergens)}")
-                            else:
-                                st.warning(f"**Contains:** {allergens}")
+                    if product.get('allergens'):
+                        allergens = product.get('allergens')
+                        if isinstance(allergens, list):
+                            st.warning(f"**Contains:** {', '.join(allergens)}")
+                        else:
+                            st.warning(f"**Contains:** {allergens}")
 
-                        badge_col = st.columns(2)
-                        with badge_col[0]:
-                            if product.get('chef_special'):
-                                st.success("👨‍🍳 Chef's Special")
-                        with badge_col[1]:
-                            if product.get('limited_time'):
-                                st.error("⏰ Limited Time")
-                        st.markdown(f"</div>", unsafe_allow_html=True)
+                    badge_col = st.columns(2)
+                    with badge_col[0]:
+                        if product.get('chef_special'):
+                            st.success("👨‍🍳 Chef's Special")
+                    with badge_col[1]:
+                        if product.get('limited_time'):
+                            st.error("⏰ Limited Time")
+                    st.markdown(f"</div>", unsafe_allow_html=True)
 
 
 
@@ -329,8 +331,7 @@ for message in st.session_state.messages:
 if prompt := st.chat_input("What are you craving today?"):
     user_html = f"<div class='user-bubble'>{prompt}</div>"
     st.session_state.messages.append({"role": "user", "content": user_html})
-    with st.chat_message("user"):
-        st.markdown(user_html, unsafe_allow_html=True)
+    st.markdown(user_html, unsafe_allow_html=True)
 
     # Prepare payload
     payload = {
@@ -340,7 +341,7 @@ if prompt := st.chat_input("What are you craving today?"):
 
     # Send to backend
     with st.chat_message("assistant"):
-        with st.spinner("FoodieBot is thinking..."):
+        with st.spinner("Foodiebot is Thinking ..."):
             try:
                 response = requests.post(st.session_state.api_url, json=payload, timeout=12)
                 response.raise_for_status()
