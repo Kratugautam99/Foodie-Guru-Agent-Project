@@ -126,23 +126,12 @@ From mood detection to interest scoring, from database queries to live dashboard
    cd Foodie-Guru-Agent-Project
    ```
 
-2. **Create a virtual environment (by Conda) Recommended**
+2. **Create a virtual environment (by Conda) **
   ```bash
   conda env create -f environment.yml
   ```
 
-3. **Create a virtual environment (by Venv) for Python Version = 3.10.18**  
-   ```bash
-   python3 -m venv foodenv
-   source foodenv/bin/activate
-   ```
-
-4. **Install dependencies (If created by Venv)**  
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-5. **Set environment variable (Important)**
+3. **Set environment variable (Important)**
    ```bash
    export GROQ_API_KEY = "your_api_key_here"
    ```
