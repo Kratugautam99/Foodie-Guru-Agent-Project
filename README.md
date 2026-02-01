@@ -75,7 +75,7 @@ From mood detection to interest scoring, from database queries to live dashboard
 | Backend Framework       | FastAPI                   |
 | Frontend Framework      | Streamlit                 |
 | Database                | SQLite (FoodData.db, Analytics.db) |
-| Language                | Python 3.x                |
+| Language                | Python 3.11                |
 | Key Libraries           | uvicorn, pydantic, pandas, requests |
 | AI & Data Generation    | Groq API (product gen), LLM API (chat) |
 
@@ -127,9 +127,9 @@ From mood detection to interest scoring, from database queries to live dashboard
    ```
 
 2. **Create a virtual environment (by Conda) Recommended**
-  ```bash
-  conda env create -f environment.yml
-  ```
+   ```bash
+   conda env create -f environment.yml
+   ```
 
 3. **Create a virtual environment (by Venv) for Python Version = 3.11**  
    ```bash
@@ -143,7 +143,7 @@ From mood detection to interest scoring, from database queries to live dashboard
    uv venv --python 3.11 foodieenv
    source foodieenv/Scripts/activate   
    uv pip install -r requirements.txt
-  ```
+   ```
 
 5. **Set environment variable (Important)**
    ```bash
