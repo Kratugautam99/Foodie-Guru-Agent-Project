@@ -1,8 +1,8 @@
 <p align="center">
   <img src="https://raw.githubusercontent.com/Kratugautam99/Foodie-Guru-Agent-Project/refs/heads/main/Images/Icon/icon.png" alt="FoodieGuruAgent Logo" width="400" />
-  <h1 align="center">Foodie-Guru-Agent</h1>
+  <h1 align="center">🍔 Foodie-Guru-Agent</h1>
   <p align="center">
-    🍔 Your AI-powered culinary companion — delivering smart, mood‑aware, and personalized fast‑food recommendations in real time 🚀
+     Your AI-powered culinary companion — delivering smart, mood‑aware, and personalized fast‑food recommendations in real time conversation
   </p>
 </p>
 
