@@ -90,6 +90,7 @@ From mood detection to interest scoring, from database queries to live dashboard
 │   ├── background
 │   ├── demo
 │   └── database_images
+|
 ├── backend                  # Core backend logic and APIs
 │   ├── analytics.py             # Food data analytics functions
 │   ├── chat_engine.py           # Conversational AI engine
@@ -99,20 +100,25 @@ From mood detection to interest scoring, from database queries to live dashboard
 │   ├── main.py                  # Entry point for backend server
 │   ├── session_id_generator.py  # Session ID Generator
 │   └── models.py                # Data models and schemas
+|
 ├── data                         # Databases and JSON datasets
 │   ├── Analytics.db
 │   ├── FoodData.db
 │   ├── FoodData.json
 │   └── __init__.py
+|
 ├── frontend                 # Frontend app interface
 │   └── app.py
+|
 ├── sqlite3 executables      # SQLite utilities and executables
 │   ├── sqldiff.exe
 │   ├── sqlite3.exe
 │   ├── sqlite3_analyzer.exe
 │   └── sqlite_rsync.exe
+|
 ├── problem statement        # Problem Statement tackled by the project
-│   └── AI Food Agent.pdf
+│   └── AI_Food_Agent.pdf
+|
 └── requirements.txt         # Python dependencies
 ```
 
