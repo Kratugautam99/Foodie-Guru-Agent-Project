@@ -141,7 +141,7 @@ From mood detection to interest scoring, from database queries to live dashboard
    ```bash
    python3 -m venv foodieenv
    source foodieenv/Scripts/activate
-   pip install -r requirements.txt
+   py -3.11 -m pip install -r requirements.txt
    ```
 
 4. **Create a virtual environment (by UV) for Python Version = 3.11**  
@@ -161,13 +161,13 @@ From mood detection to interest scoring, from database queries to live dashboard
 
 ### 1. Start the FastAPI Backend
 ```bash
-uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
+py -3.11 -m uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 Swagger UI will be available at `http://localhost:8000/docs`.
 
 ### 2. Directly Launch the Streamlit Frontend
 ```bash
-streamlit run frontend/app.py
+py -3.11 -m streamlit run frontend/app.py
 ```
 Open the Streamlit app in your browser at `http://localhost:8501` (or use the live demo link above).
 
