@@ -160,10 +160,22 @@ From mood detection to interest scoring, from database queries to live dashboard
 ## ▶️ Running the Project
 
 ### 1. Start the FastAPI Backend
+
+- By Venv 
 ```bash
 py -3.11 -m uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
 ```
+
 OR
+
+- By Conda
+```bash
+uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+OR
+
+- By UV
 ```bash
 uv run uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
 ```
@@ -171,10 +183,22 @@ uv run uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
 Swagger UI will be available at `http://localhost:8000/docs`.
 
 ### 2. Directly Launch the Streamlit Frontend
+
+- By Venv
 ```bash
 py -3.11 -m streamlit run frontend/app.py
 ```
+
 OR
+
+- By Conda
+```bash
+streamlit run frontend/app.py
+```
+
+OR
+
+- By UV
 ```bash
 uv run streamlit run frontend/app.py
 ```
