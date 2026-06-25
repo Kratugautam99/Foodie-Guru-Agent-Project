@@ -163,11 +163,20 @@ From mood detection to interest scoring, from database queries to live dashboard
 ```bash
 py -3.11 -m uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
 ```
+OR
+```bash
+uv run uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
 Swagger UI will be available at `http://localhost:8000/docs`.
 
 ### 2. Directly Launch the Streamlit Frontend
 ```bash
 py -3.11 -m streamlit run frontend/app.py
+```
+OR
+```bash
+uv run streamlit run frontend/app.py
 ```
 Open the Streamlit app in your browser at `http://localhost:8501` (or use the live demo link above).
 
