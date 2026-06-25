@@ -2,16 +2,29 @@
 from PIL import Image
 from io import BytesIO
 from typing import Any, List, Dict
-import threading, uvicorn, requests, json, os, sys, pandas as pd, streamlit as st
+import threading, uvicorn, requests, json, os, sys, socket, asyncio, pandas as pd, streamlit as st
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 from backend import analytics
 from backend.main import app, session_id
 from backend.filter_functions import get_unique_values
-def run_api():
-    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
-threading.Thread(target=run_api, daemon=True).start()
+API_PORT = int(os.environ.get("API_PORT", 8000))
+API_MODULE = os.environ.get("API_MODULE", "backend.main:app")
+
+def port_in_use(host: str, port: int) -> bool:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.settimeout(0.5)
+        return s.connect_ex((host, port)) == 0
+
+# Start the API once per container if port is free
+if not port_in_use("0.0.0.0", API_PORT):
+    # Launch uvicorn as a detached subprocess so Streamlit can continue
+    asyncio.create_subprocess_exec(
+        "uvicorn", API_MODULE, "--host", "0.0.0.0", f"--port={API_PORT}",
+        stdout=asyncio.subprocess.DEVNULL,
+        stderr=asyncio.subprocess.DEVNULL
+    )
 # ----------------------
 # Page / Theme Setup
 # ----------------------
