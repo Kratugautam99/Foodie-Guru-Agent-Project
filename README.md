@@ -1,6 +1,6 @@
 <p align="center">
   <img src="https://raw.githubusercontent.com/Kratugautam99/Foodie-Guru-Agent-Project/refs/heads/main/Images/Icon/icon.png" alt="FoodieGuruAgent Logo" width="400" />
-  <h1 align="center">🍔 Foodie-Guru-Agent</h1>
+  <h1 align="center">🍔 Foodie-Guru-Agent V4</h1>
   <p align="center">
      Your AI-powered culinary companion — delivering smart, mood‑aware, and personalized fast‑food recommendations in real time conversation
   </p>
@@ -105,10 +105,10 @@ From mood detection to interest scoring, from database queries to live dashboard
 ```bash
 .
 ├── images                   # Icons, Background, Demonstration Images, Database Visuals
-│   ├── Icon
-│   ├── background
-│   ├── demo
-│   └── database_images
+│   ├── Icon/
+│   ├── background/
+│   ├── demo/
+│   └── database_images/
 |
 ├── backend                  # Core backend logic and APIs
 │   ├── analytics.py             # Food data analytics functions
@@ -120,25 +120,31 @@ From mood detection to interest scoring, from database queries to live dashboard
 │   ├── session_id_generator.py  # Session ID Generator
 │   └── models.py                # Data models and schemas
 |
-├── data                         # Databases and JSON datasets
+├── data                         # Databases and JSON Datasets
 │   ├── Analytics.db
 │   ├── FoodData.db
 │   ├── FoodData.json
 │   └── __init__.py
 |
-├── frontend                 # Frontend app interface
+├── frontend                 # Frontend App Interface
 │   └── app.py
 |
-├── sqlite3 executables      # SQLite utilities and executables
+├── sqlite3 executables      # SQLite Utilities and Executables
 │   ├── sqldiff.exe
 │   ├── sqlite3.exe
 │   ├── sqlite3_analyzer.exe
 │   └── sqlite_rsync.exe
 |
-├── problem statement        # Problem Statement tackled by the project
+├── problem statement        # Problem Statement tackled by this Project
 │   └── AI_Food_Agent.pdf
 |
-└── requirements.txt         # Python dependencies
+├── .gitignore               # List of content to be Ignored by Github
+|
+├── README.md                # This File
+|
+├── environment.yml          # Conda Environment Export
+|
+└── requirements.txt         # Python Dependencies
 ```
 
 ---
