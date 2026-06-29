@@ -17,7 +17,7 @@ def get_fastfood_by_filters(
     limited_time=None,
     min_spice=None,
     max_spice=None,
-    limit=None,
+    count=None,
     debug=None
 ):
     """
@@ -91,12 +91,12 @@ def get_fastfood_by_filters(
     if popularity is not None:
         query += " AND popularity_score >= ?"
         params.append(popularity)
-        query += " ORDER BY popularity_score DESC LIMIT ?"
-        params.append(limit)
-    else:
-        query += " LIMIT ?"
-        params.append(limit)
+        query += " ORDER BY popularity_score DESC"
     
+    if count is not None:
+        query += " LIMIT ?"
+        params.append(count)
+
     # Debugging
     if debug:
         print("DEBUG SQL:", query)

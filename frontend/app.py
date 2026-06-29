@@ -2,7 +2,7 @@
 from PIL import Image
 from io import BytesIO
 from typing import Any, List, Dict
-import threading, uvicorn, requests, json, os, sys, socket,  pandas as pd, streamlit as st
+import threading, uvicorn, requests, json, os, sys, pandas as pd, streamlit as st
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
@@ -10,13 +10,8 @@ from backend import analytics
 from backend.main import app, session_id
 from backend.filter_functions import get_unique_values
 def run_api():
-    uvicorn.run("backend.main:app", host="0.0.0.0", port=8000, log_level="info")
-
-if "api_started" not in st.session_state:
-    # start in background thread once per user session
-    t = threading.Thread(target=run_api, daemon=True)
-    t.start()
-    st.session_state.api_started = True
+    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
+threading.Thread(target=run_api, daemon=True).start()
 # ----------------------
 # Page / Theme Setup
 # ----------------------
@@ -142,7 +137,7 @@ with col2:
 </div>''', unsafe_allow_html=True)
 
 # Default backend URL (matches backend main.py)
-DEFAULT_API_URL = os.environ.get("FOODIEBOT_API_URL", "http://localhost:8000//chat")
+DEFAULT_API_URL = os.environ.get("FOODIEBOT_API_URL", "http://localhost:8000/chat")
 
 # Initialize session state
 if "messages" not in st.session_state:

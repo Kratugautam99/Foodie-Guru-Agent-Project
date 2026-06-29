@@ -1,0 +1,6 @@
+foodieenv
+.venv
+.vscode
+uv.lock
+python-version
+config.toml

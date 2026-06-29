@@ -34,4 +34,4 @@ class BotResponse(BaseModel):
     reply: str
     suggested_fastfoods: List[Fastfood]=[] # List of fastfoods to recommend
     interest_score: int = 0
-    session_id: str
+    session_id: str = ""
