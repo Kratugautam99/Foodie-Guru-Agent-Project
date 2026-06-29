@@ -170,7 +170,7 @@ OR
 
 - By Conda
 ```bash
-uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
+python -m uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 OR
@@ -193,7 +193,7 @@ OR
 
 - By Conda
 ```bash
-streamlit run frontend/app.py
+python -m streamlit run frontend/app.py
 ```
 
 OR
