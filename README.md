@@ -17,17 +17,36 @@ From mood detection to interest scoring, from database queries to live dashboard
 
 ---
 
+## 🔗 Quicklinks
+
+- [🚀 Live Demo](#-live-demo)
+- [🖼️ Demo Screenshots](#demo)
+- [✨ Key Features](#-key-features)
+- [🛠 Tech Stack](#-tech-stack)
+- [📁 Directory Structure](#-directory-structure)
+- [🛠 Installation & Setup](#-installation--setup)
+- [®️ Running the Project](#️-running-the-project)
+- [✒️ Prompt Engineering Aid](#️-prompt-engineering-aid)
+- [📖 API Endpoints](#-api-endpoints)
+- [🔧 Customization](#-customization)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+
+
+---
+
 
 ## 🚀 Live Demo
 
-- Frontend Chat Interface (Streamlit):  
+- Frontend Chat Interface [ Full-App-Deployed ]:  
   https://kratugautam-foodieguruagent-project.streamlit.app
 
-- Backend API (FastAPI) [Not-Deployed-Standalonely]:  
+- Backend API [ Not Deployed Separately ]:  
   http://localhost:8000
 
 ---
 
+<a id="demo"></a>
 ## 🖼️ Demo Screenshots
 
 <p align="center">
@@ -126,6 +145,10 @@ From mood detection to interest scoring, from database queries to live dashboard
 
 ## 🛠 Installation & Setup
 
+***Git-Bash Based commands below, use CMD, PowerShell if required***
+
+---
+
 1. **Clone the repository**  
    ```bash
    git clone https://github.com/Kratugautam99/Foodie-Guru-Agent-Project.git
@@ -208,7 +231,7 @@ Open the Streamlit app in your browser at `http://localhost:8501` (or use the li
 
 ----
 
-## ✒️ Prompts Engineering Aid with Examples
+## ✒️ Prompt Engineering Aid 
 
 ### **1. General Inquiries**  
 - "Tell me about pizza options."  
